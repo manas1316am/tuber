@@ -183,3 +183,54 @@ def contact(request):
 ``` python 
     {% include 'includes/<file_name>.html' %}
 ```
+
+## 10.  Creating Model for Slider
+    a. Now, we have to create a model for slider, with the help of which we can add data from admin. 
+
+    b. Add this code to models.py of webpages folder. 
+``` python
+class Slider(models.Model):
+    headline = models.CharField(max_length = 255)
+    subtitle = models.CharField(max_length = 255)
+    button_text = models.CharField(max_length=255)
+    photo = models.ImageField(upload_to='media/slider/%Y/')
+    created_date = models.DateTimeField(auto_now_add=True)
+```
+    c. Now, register this Slider class in admin.py of webpages, to be recognized by admin page. 
+``` python
+from .models import Slider
+
+admin.site.register(Slider)
+```
+
+> To change the default name of the saved slider in admin, you have to overwrite the __str__ function of the python in models.py under Slider class. 
+```python 
+def __str__(self):
+    return self.headline
+```
+
+## 11. Pulling data from Admin Panel to the home page
+    a. Move to views.py of webpages folder
+    b. import Slider from models by adding: 
+```python
+from .models import Slider
+```
+    c. We have to put this slider inside home, so we will add this feature inside home function of views.py
+
+    d. Add these lines in home function on top: 
+```python
+sliders = Slider.objects.all()
+data = {
+    'sliders': sliders
+}
+```
+    e. objects is making queries and adding all in it, means that we want to extract everything that is present in Slider.
+
+    f. After declaring sliders variables, you should have to put that variable inside data. 
+
+    g. After all this, you want your data to be rendered with home, and for that, you have to clip third part of the return part of home function as "data"
+```python 
+return render(request, 'webpages/home.html', data)
+```
+
+> Whenever we want to add a variable inside the django as jinja template, then instead of {%  %},  we should use {{  }}
